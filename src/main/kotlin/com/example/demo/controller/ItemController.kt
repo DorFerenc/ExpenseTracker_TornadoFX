@@ -8,11 +8,8 @@ import com.example.demo.util.execute
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.PieChart
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
 import tornadofx.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -83,6 +80,8 @@ class ItemController: Controller() {
                 currentIndex = index
                 pieItemsData[currentIndex].name = data.itemName.value
                 pieItemsData[currentIndex].pieValue = data.itemPrice.value.toDouble()
+            } else {
+                // Ignore
             }
         }
     }
@@ -94,5 +93,15 @@ class ItemController: Controller() {
                 currentIndex = index
         }
         pieItemsData.removeAt(currentIndex)
+    }
+
+    fun filterByEntryDates(today: LocalDate?): ObservableList<ExpensesEntryModel> = execute {
+        ExpensesEntryTbl
+            .select { ExpensesEntryTbl.entryDate eq today!! }
+            .map {
+                ExpensesEntryModel().apply {
+                    item = it.toExpensesEntry()
+                }
+            }.observable()
     }
 }

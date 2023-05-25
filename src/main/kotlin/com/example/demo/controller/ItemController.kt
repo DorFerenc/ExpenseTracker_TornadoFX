@@ -38,12 +38,6 @@ class ItemController: Controller() {
         items.forEach {
             pieItemsData.add(PieChart.Data(it.itemName.value, it.itemPrice.value.toDouble()))
         }
-//        add(LocalDate.now(),"Pants", 253.45)
-//        add(LocalDate.now(),"Banana", 23.45)
-//        add(LocalDate.now(),"Jewelery", 29843.45)
-//        listOfItems.forEach {
-//            println("Item::: ${it.itemName.value}")
-//        }
     }
 
     fun add(newEntryDate: LocalDate, newItem: String, newPrice: Double): ExpensesEntry {
@@ -78,6 +72,19 @@ class ItemController: Controller() {
         }
         listOfItems.remove(model)
         removeModelFromPie(model)
+    }
+
+    fun updatePiecePie(model: ExpensesEntryModel) {
+        val modelId = model.id
+        var currentIndex: Int
+        items.forEachIndexed { index, data ->
+            if (modelId == data.id) {
+                //we have the right object to update
+                currentIndex = index
+                pieItemsData[currentIndex].name = data.itemName.value
+                pieItemsData[currentIndex].pieValue = data.itemPrice.value.toDouble()
+            }
+        }
     }
 
     private fun removeModelFromPie(model: ExpensesEntryModel) {

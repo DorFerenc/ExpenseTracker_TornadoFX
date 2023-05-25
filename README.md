@@ -14,7 +14,7 @@
 * Download [Kotlin Plugin](https://plugins.jetbrains.com/plugin/6954-kotlin).
 * You can also just go to `setting`  (ctrl + alt + s) → `Plugins` → search for `Kotlin` and `install`
 
-### DB browser
+### Bonus (not an essential): DB browser
 * Download [DB browser for sqlite](https://sqlitebrowser.org/dl/).
 * To be able to see the database.
 * In the DB Browser click `Open Database` (ctrl + O).

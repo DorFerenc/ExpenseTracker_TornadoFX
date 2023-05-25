@@ -2,10 +2,16 @@ package com.example.demo.view
 
 import com.example.demo.controller.ItemController
 import com.example.demo.model.ExpensesEntryModel
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.geometry.Pos
 import javafx.scene.chart.PieChart
 import javafx.scene.control.ComboBox
+import javafx.scene.control.Label
+import javafx.scene.paint.Color
+import javafx.scene.text.FontWeight
 import tornadofx.*
 import java.time.LocalDate
 
@@ -21,6 +27,9 @@ class ExpensesReport : View("Report") {
     private var listOfItems: ObservableList<ExpensesEntryModel> by singleAssign()
     private var pieData = FXCollections.observableArrayList<PieChart.Data>()
 
+    private var totalExpensesLabel: Label by singleAssign()
+    private val totalExpensesProperty = SimpleDoubleProperty(1.0)
+
     val today = LocalDate.of(LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth)
     init {
         listOfItems = controller.filterByEntryDates(today)
@@ -28,6 +37,7 @@ class ExpensesReport : View("Report") {
         listOfItems.forEach {
             pieData.add(PieChart.Data(it.itemName.value, it.itemPrice.value.toDouble()))
         }
+        updateTotalExpenses()
     }
     override val root = borderpane {
         disableDelete()
@@ -49,6 +59,7 @@ class ExpensesReport : View("Report") {
                             this.valueProperty().onChange {
                                 getFilteredItems(it)
                                 updatePie()
+                                updateTotalExpenses()
                             }
 
                         }
@@ -66,8 +77,29 @@ class ExpensesReport : View("Report") {
             }
         }
 
-        right {
+        right = vbox(10) {
+            alignment = Pos.CENTER
+            paddingBottom = 10.0
+
             piechart("Expenses Report", data = pieData)
+
+            totalExpensesLabel = label {
+//                vboxConstraints { marginTop = 20.0 }
+                if (totalExpensesProperty.doubleValue() != 0.0) {
+                    style {
+                        fontSize = 19.px
+                        padding = box(10.px)
+                        textFill = Color.GREEN
+                        fontWeight = FontWeight.EXTRA_BOLD
+                        borderRadius = multi(box(8.px))
+                        backgroundColor += c("white", 0.8)
+
+                    }
+                    bind(Bindings.concat("Total Expenses: ", "$ ", Bindings.format("%.2f", totalExpensesProperty)))
+                } else {
+                    // do nothing
+                }
+            }
         }
 
     }
@@ -103,7 +135,7 @@ class ExpensesReport : View("Report") {
                 listOfItems.setAll(controller.filterByDateRange(startDate, endDate))
             }
         }
-
+        updateTotalExpenses()
 
         updatePie()
         listOfItems.forEach {
@@ -111,6 +143,21 @@ class ExpensesReport : View("Report") {
         }
 
 
+    }
+
+    /**
+     * Updates the total expenses by calculating the sum of all expense entries.
+     * Sets the total expenses property and updates the model's total expenses value.
+     */
+    private fun updateTotalExpenses() {
+        var total = 0.0
+        try {
+            // fetch all expenses
+            listOfItems.forEach {
+                total += (it.itemPrice.value.toDouble())
+            }
+            totalExpensesProperty.set(total)
+        }catch ( e: Exception) { totalExpensesProperty.set(0.0) }
     }
 
     /**

@@ -2,6 +2,7 @@ package com.example.demo.view
 
 import com.example.demo.controller.ItemController
 import com.example.demo.model.ExpensesEntryModel
+import javafx.geometry.Pos
 import javafx.scene.input.KeyCode
 import tornadofx.*
 
@@ -96,6 +97,7 @@ class ExpensesEditor : View("Expenses") {
 
                 // table view to see the results
                 fieldset() {
+                    vboxConstraints { marginTop = 20.0}
                     tableview<ExpensesEntryModel> {
                         items = controller.items
                         mTableView = editModel // connecting  mTable to this table and enabling to edit
@@ -105,6 +107,14 @@ class ExpensesEditor : View("Expenses") {
                         column("Price", ExpensesEntryModel::itemPrice)
                     }
                 }
+            }
+        }
+
+        right = vbox {
+            alignment = Pos.CENTER
+            piechart {
+//                data("Bananas",120.0)
+                data = controller.pieItemsData
             }
         }
     }

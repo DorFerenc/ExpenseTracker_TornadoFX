@@ -78,12 +78,30 @@ class ExpensesReport : View("Report") {
      * Updates the pie chart after filtering the items.
      */
     private fun getFilteredItems(choice: String?) {
-        when(choice) {
+        when (choice) {
             "Today" -> listOfItems.setAll(controller.filterByEntryDates(today))
             "Yesterday" -> listOfItems.setAll(controller.filterByEntryDates(today.minusDays(1)))
-            "Week" -> listOfItems.setAll(controller.filterByEntryDates(today.minusWeeks(1)))
-            "Month" -> listOfItems.setAll(controller.filterByEntryDates(today.minusMonths(1)))
-            "Year" -> listOfItems.setAll(controller.filterByEntryDates(today.minusYears(1)))
+//            "Week" -> listOfItems.setAll(controller.filterByEntryDates(today.minusWeeks(1)))
+            "Week" -> {
+//                val startDate = today.minusWeeks(1).plusDays(0) // Start from one week ago, excluding today
+                val startDate = today.minusWeeks(1) // Start from one week ago, excluding today
+                val endDate = today // Today's date
+                listOfItems.setAll(controller.filterByDateRange(startDate, endDate))
+            }
+
+//            "Month" -> listOfItems.setAll(controller.filterByEntryDates(today.minusMonths(1)))
+            "Month" -> {
+                val startDate = today.minusMonths(1) // Start from one Month ago
+                val endDate = today // Today's date
+                listOfItems.setAll(controller.filterByDateRange(startDate, endDate))
+            }
+
+//            "Year" -> listOfItems.setAll(controller.filterByEntryDates(today.minusYears(1)))
+            "Year" -> {
+                val startDate = today.minusYears(1) // Start from one Month ago
+                val endDate = today // Today's date
+                listOfItems.setAll(controller.filterByDateRange(startDate, endDate))
+            }
         }
 
 

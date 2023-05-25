@@ -141,6 +141,20 @@ class ItemController: Controller() {
                 ExpensesEntryModel().apply {
                     item = it.toExpensesEntry()
                 }
-            }.observable()
+            }.asObservable()
+    }
+
+    /**
+     * Filters the expenses by the specified date range.
+     *
+     * @param startDate The start date of the range.
+     * @param endDate The end date of the range.
+     * @return A list of expenses within the specified date range.
+     */
+    fun filterByDateRange(startDate: LocalDate, endDate: LocalDate): List<ExpensesEntryModel> {
+        return items.filter { entry ->
+            val entryDate = entry.entryDate.value
+            entryDate in startDate..endDate
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.demo.model
 
-import com.example.demo.util.toJavaLocalDate
-
+import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -9,8 +8,8 @@ import javafx.beans.property.SimpleStringProperty
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.date
-import java.time.LocalDate
 import tornadofx.*
+import java.time.LocalDate
 
 fun ResultRow.toExpensesEntry() = ExpensesEntry(
     this[ExpensesEntryTbl.id],
@@ -41,6 +40,8 @@ class ExpensesEntry(id: Int, entryDate: LocalDate, itemName: String, itemPrice: 
     val itemPriceProperty = SimpleDoubleProperty(itemPrice)
     var itemPrice by itemPriceProperty
 
+    var totalExpenses = Bindings.add(itemPriceProperty, 0)
+
     override fun toString(): String {
         return "ExpensesEntry(id=$id, entryDate=$entryDate, itemName=$itemName, itemPrice=$itemPrice"
     }
@@ -51,5 +52,5 @@ class ExpensesEntryModel: ItemViewModel<ExpensesEntry>() {
     val entryDate = bind { item?.entryDateProperty }
     val itemName = bind { item?.itemNameProperty }
     val itemPrice = bind { item?.itemPriceProperty }
-
+    var totalExpenses = itemProperty.select(ExpensesEntry::totalExpenses)
 }

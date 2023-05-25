@@ -1,14 +1,5 @@
 package com.example.demo.view
 
-//import com.example.demo.controller.ItemController
-//import com.example.demo.model.ExpensesEntryModel
-//import javafx.beans.binding.Bindings
-//import javafx.beans.property.SimpleDoubleProperty
-//import javafx.geometry.Pos
-//import javafx.scene.input.KeyCode
-//import tornadofx.*
-//import java.awt.Label
-
 import com.example.demo.controller.ItemController
 import com.example.demo.model.ExpensesEntryModel
 import javafx.beans.binding.Bindings
@@ -21,19 +12,36 @@ import javafx.scene.text.FontWeight
 import tornadofx.*
 import kotlin.Exception
 
+/**
+ * View class representing the Expenses Editor.
+ * Allows users to add, delete, and edit expense entries.
+ * Displays a table of expense entries and a pie chart showing the total expenses.
+ */
 class ExpensesEditor : View("Expenses") {
 
+    // Controller and model instances
     private val model = ExpensesEntryModel()
     private val controller: ItemController by inject()
+
+    // UI Components
     private var mTableView: TableViewEditModel<ExpensesEntryModel> by singleAssign()
     private var totalExpensesLabel: Label by singleAssign()
     private val totalExpensesProperty = SimpleDoubleProperty(0.0)
 
+    /**
+     * Initialize the view.
+     * Update the total expenses and set up the UI components.
+     */
     init {
        updateTotalExpenses()
     }
 
+
+    /**
+     * The root UI element of the view.
+     */
     override val root = borderpane {
+        // Disable default buttons
         disableDelete()
         disableSave()
         disableCreate()
@@ -180,6 +188,10 @@ class ExpensesEditor : View("Expenses") {
         }
     }
 
+    /**
+     * Updates the total expenses by calculating the sum of all expense entries.
+     * Sets the total expenses property and updates the model's total expenses value.
+     */
     private fun updateTotalExpenses() {
         var total = 0.0
         try {
@@ -190,6 +202,11 @@ class ExpensesEditor : View("Expenses") {
         }catch ( e: Exception) { totalExpensesProperty.set(0.0) }
     }
 
+    /**
+     * Adds a new expense entry based on the data in the model.
+     * Calls the controller's add function with the entry date, item name, and item price.
+     * Updates the total expenses after adding the new entry.
+     */
     private fun addItem() {
         controller.add(model.entryDate.value, model.itemName.value, model.itemPrice.value.toDouble())
         updateTotalExpenses()

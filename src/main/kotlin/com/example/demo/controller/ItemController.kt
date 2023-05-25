@@ -14,6 +14,9 @@ import tornadofx.*
 import java.math.BigDecimal
 import java.time.LocalDate
 
+/**
+ * The controller responsible for managing expense items.
+ */
 class ItemController: Controller() {
 
     //Get All items!!
@@ -25,7 +28,13 @@ class ItemController: Controller() {
         }.asObservable()
     }
 
+    /**
+     * The list of all expense items.
+     */
     var items: ObservableList<ExpensesEntryModel> by singleAssign() // interface to use list of items
+    /**
+     * Data for the pie chart in the view.
+     */
     var pieItemsData = FXCollections.observableArrayList<PieChart.Data>() // pass data to the pie chart in the view
 //    var expenseModel = ExpensesEntryModel()
 
@@ -37,6 +46,13 @@ class ItemController: Controller() {
         }
     }
 
+    /**
+     * Adds a new expense entry.
+     * @param newEntryDate The date of the new entry.
+     * @param newItem The name of the item.
+     * @param newPrice The price of the item.
+     * @return The created [ExpensesEntry] object.
+     */
     fun add(newEntryDate: LocalDate, newItem: String, newPrice: Double): ExpensesEntry {
         val newEntry = execute {
             ExpensesEntryTbl.insert {
@@ -51,6 +67,11 @@ class ItemController: Controller() {
         return newEntryAsExpensesEntry
     }
 
+    /**
+     * Updates an existing expense entry.
+     * @param updatedItem The [ExpensesEntryModel] object containing the updated values.
+     * @return The number of rows affected in the database.
+     */
     fun update(updatedItem: ExpensesEntryModel): Int {
         return execute {
             ExpensesEntryTbl.update ({ ExpensesEntryTbl.id eq(updatedItem.id.value.toInt()) }) {
@@ -61,6 +82,10 @@ class ItemController: Controller() {
         }
     }
 
+    /**
+     * Deletes an expense entry.
+     * @param model The [ExpensesEntryModel] object to be deleted.
+     */
     fun delete(model: ExpensesEntryModel) {
         execute {
             ExpensesEntryTbl.deleteWhere {
@@ -71,6 +96,10 @@ class ItemController: Controller() {
         removeModelFromPie(model)
     }
 
+    /**
+     * Updates the corresponding pie chart data for a specific expense entry.
+     * @param model The [ExpensesEntryModel] object to update the pie chart data for.
+     */
     fun updatePiecePie(model: ExpensesEntryModel) {
         val modelId = model.id
         var currentIndex: Int
@@ -86,6 +115,10 @@ class ItemController: Controller() {
         }
     }
 
+    /**
+     * Removes an expense entry from the pie chart data.
+     * @param model The [ExpensesEntryModel] object to be removed from the pie chart.
+     */
     private fun removeModelFromPie(model: ExpensesEntryModel) {
         var currentIndex = 0
         pieItemsData.forEachIndexed { index, data ->
@@ -95,6 +128,12 @@ class ItemController: Controller() {
         pieItemsData.removeAt(currentIndex)
     }
 
+
+    /**
+     * Filters expense entries by a specific entry date.
+     * @param today The entry date to filter by.
+     * @return An [ObservableList] of filtered [ExpensesEntryModel] objects.
+     */
     fun filterByEntryDates(today: LocalDate?): ObservableList<ExpensesEntryModel> = execute {
         ExpensesEntryTbl
             .select { ExpensesEntryTbl.entryDate eq today!! }

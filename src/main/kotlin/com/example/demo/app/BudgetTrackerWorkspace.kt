@@ -9,22 +9,30 @@ import javafx.scene.control.TabPane
 import org.jetbrains.exposed.sql.Database
 import tornadofx.*
 
+
+/**
+ * The main application class representing the Budget Tracker workspace.
+ * It extends the TornadoFX `Workspace` class and serves as the entry point for the application.
+ *
+ * @param title The title of the application window.
+ * @param navigationMode The navigation mode for the workspace. In this case, it is set to `NavigationMode.Tabs`.
+ */
 class BudgetTrackerWorkspace : Workspace("Budget Tracker Workerspace", NavigationMode.Tabs) {
 
     init {
-        //we initialize db etc...
+        // Enable console logging and set up the database
         enableConsoleLogger()
         Database.connect("jdbc:sqlite:./app-budget-tracker.db", "org.sqlite.JDBC")
         createTables()
 
-
-        //controller(es)
+        // Initialize the controllers
         ItemController()
 
-        //dock our views
+        // Dock the views
         dock<ExpensesEditor>()
         dock<ExpensesReport>()
 
+        // Configure the tab container
         tabContainer.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
     }
 }

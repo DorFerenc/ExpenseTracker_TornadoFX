@@ -18,6 +18,9 @@ fun ResultRow.toExpensesEntry() = ExpensesEntry(
     this[ExpensesEntryTbl.itemPrice].toDouble()
 )
 
+/**
+ * Represents the table structure for expenses entries.
+ */
 object ExpensesEntryTbl : Table() {
     val id = integer("id").autoIncrement()
     val entryDate = date("entry_date")
@@ -27,6 +30,13 @@ object ExpensesEntryTbl : Table() {
     override val primaryKey = PrimaryKey(id, name = "PK_ExpensesEntryTbl_Id")
 }
 
+/**
+ * Represents an expense entry.
+ * @param id The ID of the expense entry.
+ * @param entryDate The date of the expense entry.
+ * @param itemName The name of the item.
+ * @param itemPrice The price of the item.
+ */
 class ExpensesEntry(id: Int, entryDate: LocalDate, itemName: String, itemPrice: Double) {
     val idProperty = SimpleIntegerProperty(id)
     var id by idProperty
@@ -42,11 +52,17 @@ class ExpensesEntry(id: Int, entryDate: LocalDate, itemName: String, itemPrice: 
 
     var totalExpenses = Bindings.add(itemPriceProperty, 0)
 
+    /**
+     * Returns a string representation of the expense entry.
+     */
     override fun toString(): String {
         return "ExpensesEntry(id=$id, entryDate=$entryDate, itemName=$itemName, itemPrice=$itemPrice"
     }
 }
 
+/**
+ * Represents the model for an expense entry.
+ */
 class ExpensesEntryModel: ItemViewModel<ExpensesEntry>() {
     val id = bind { item?.idProperty }
     val entryDate = bind { item?.entryDateProperty }
